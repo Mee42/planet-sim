@@ -17,4 +17,5 @@ dependencies {
     implementation 'org.jdbi:jdbi3-sqlobject:3.12.2'
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.6.0'
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
+    implementation "com.discord4j:discord4j-core:3.0.14"
 }

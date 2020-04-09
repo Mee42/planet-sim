@@ -1,31 +1,54 @@
 package dev.mee42;
 
-import dev.mee42.db.*;
+import dev.mee42.discord.Command;
+import dev.mee42.discord.Context;
+import dev.mee42.discord.Discord;
+import dev.mee42.discord.HelpCommand;
+import discord4j.core.event.domain.message.MessageCreateEvent;
+import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 public class Main {
   public static void main(String[] args) {
     System.err.println("Planet Sim!\n");
     System.err.flush();
-//    System.out.println(Player.get(0).get());
-//    System.out.println(Location.get(11).get());
-//    System.out.println(SolarSystem.get(10).get());
 
-    // lets say
-    Player p = Player.get(0).get();
-    System.out.println("player: " + p);
+    // add all the commands
+    Discord.commands.add(new HelpCommand());
 
-    Location location = p.location.get();
-    System.out.println(location);
-    if(location instanceof Planet) {
-      Planet p1 = (Planet)location;
-      System.out.println("player is on planet " + p1.name + " in solar system " + p1.solarSystem.get().name);
-    } else if(location instanceof Moon){
-      Moon m = (Moon)location;
-      System.out.println("player is on moon " + m.name + " which is around planet " + m.planet.get().name +
-              " in solar system " + m.planet.get().solarSystem.get().name);
-    } else if(location instanceof Transit) {
-      Transit t = (Transit)location;
-      System.out.println("player is in transit from " + t.goingTo + " from " + t.goingFrom + ""); // without get
-    }
+    Discord.client.getEventDispatcher().on(MessageCreateEvent.class)
+            .flatMap(m -> {
+              if(m.getMessage().getContent().orElse("").equals("ps mine")) {
+                return m.getMessage().getChannel().flatMap(c -> c.createMessage("sorry, there was an error mining for you. You may have mined before this hour"));
+              } else {
+                return Mono.empty();
+              }
+            }).subscribe();
+
+
+    Discord.client.getEventDispatcher().on(MessageCreateEvent.class)
+            .filter(it -> it.getMessage().getContent().isPresent())
+            .filter(it -> it.getMessage().getContent().get().startsWith("ps"))
+            .subscribe(it -> {
+                System.out.println(it.getMessage().getContent().get());
+                String[] split =  it.getMessage().getContent().get().substring(2).trim().split(" ", 2);
+                System.out.println(Arrays.toString(split));
+                if(split.length == 0 || split[0].trim().isEmpty()) {
+                    return;
+                }
+                String commandStr = split[0];
+                String arguments = split.length == 2 ? split[1] : "";
+                Optional<Command> command = Discord.commands.stream().filter(c -> c.name.equalsIgnoreCase(commandStr.trim())).findFirst();
+                if(command.isEmpty()) {
+                    System.out.println("couldn't find command");
+                    return; // deal with later
+                }
+                Context context = new Context(it.getMessage(), arguments);
+                command.get().run(context);
+            });
+
+    Discord.client.login().block();
   }
 }

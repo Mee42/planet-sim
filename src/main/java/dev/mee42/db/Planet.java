@@ -1,30 +1,23 @@
 package dev.mee42.db;
 
+import dev.mee42.Util;
+import reactor.util.annotation.Nullable;
+
+import java.util.stream.Stream;
+
+import static dev.mee42.Util.*;
+
 public class Planet extends Location {
     public final String name;
-    public final DatabaseObject<SolarSystem> solarSystem;
-    public final DatabaseObject<Player> ownedBy; // can be null
+    public final SolarSystem solarSystem;
+    @Nullable public Player ownedBy;
 
-    Planet(int id, String name, DatabaseObject<SolarSystem> solarSystem, DatabaseObject<Player> ownedBy) {
+    public Planet(String name, SolarSystem solarSystem, @Nullable Player ownedBy, int id) {
         super(id);
+        requireNonNull(name, solarSystem);
         this.name = name;
         this.solarSystem = solarSystem;
         this.ownedBy = ownedBy;
-    }
-
-    public static DatabaseObject<Planet> getPlanet(int id){
-        return new DatabaseObject<>(id, () -> Database.connection.withHandle((handle) ->
-                handle.createQuery("SELECT * FROM planet WHERE id = :id")
-                        .bind("id", id)
-                        .map((rs, ctx) -> {
-                            int ownedBy = rs.getInt("ownedBy");
-                            return new Planet(rs.getInt("id"),
-                                           rs.getString("name"),
-                                           SolarSystem.get(rs.getInt("solarSystem")),
-                                           Player.get(ownedBy));
-                        })
-                        .list()
-        ).stream().findFirst().orElse(null));
     }
 
     @Override
@@ -35,5 +28,17 @@ public class Planet extends Location {
                 ", solarSystem=" + solarSystem +
                 ", ownedBy=" + ownedBy +
                 '}';
+    }
+
+    @Override
+    public String toNiceString() {
+        return "planet \"" + name + "\"(id: " + id + ")" + " in solar system \"" + solarSystem.name + "\" (id: " + solarSystem.id + ")";
+    }
+
+    public static Stream<Planet> getAll(){
+        return Location.allLocations.stream().filter(it -> it instanceof Planet).map(it -> (Planet) it);
+    }
+    public static Planet getEarth(){
+        return (Planet)Location.byId(11); // earth is always id 11
     }
 }

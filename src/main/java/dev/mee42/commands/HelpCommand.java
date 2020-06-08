@@ -1,11 +1,15 @@
-package dev.mee42.discord;
+package dev.mee42.commands;
+
+import dev.mee42.discord.Command;
+import dev.mee42.discord.Context;
+import dev.mee42.discord.Discord;
 
 import java.awt.*;
 import java.util.Random;
 
 public class HelpCommand extends Command {
     public HelpCommand() {
-        super(false, false, "help","get some help!", "use `ps help [name]` for more information. Like you just did.");
+        super(false, false, false, "help","get some help!", "use `ps help [name]` for more information. Like you just did.");
     }
 
     @Override

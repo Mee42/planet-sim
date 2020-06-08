@@ -1,33 +1,23 @@
 package dev.mee42.db;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.TimeZone;
+
 public class Transit extends Location {
-    public final DatabaseObject<Location> goingTo;
-    public final DatabaseObject<Location> goingFrom;
+    public final Location goingTo;
+    public final Location goingFrom;
     public final long started;
     public final long ends;
 
-    Transit(int id,DatabaseObject<Location> goingTo, DatabaseObject<Location> goingFrom, long started, long ends) {
+    Transit(int id,Location goingTo, Location goingFrom, long started, long ends) {
         super(id);
         this.goingTo = goingTo;
         this.goingFrom = goingFrom;
         this.started = started;
         this.ends = ends;
     }
-    public static DatabaseObject<Transit> getTransit(int id) {
-        return new DatabaseObject<>(id, () -> Database.connection.withHandle((handle) ->
-                handle.createQuery("SELECT * FROM transit WHERE id = :id")
-                        .bind("id", id)
-                        .map((rs, ctx) ->
-                                new Transit(rs.getInt("id"),
-                                        Location.get(rs.getInt("goingTo")),
-                                        Location.get(rs.getInt("goingFrom")),
-                                        rs.getLong("started"),
-                                        rs.getLong("ends"))
-                        )
-                        .list()
-        ).stream().findFirst().orElse(null));
-    }
-
     @Override
     public String toString() {
         return "Transit{" +
@@ -37,5 +27,18 @@ public class Transit extends Location {
                 ", started=" + started +
                 ", ends=" + ends +
                 '}';
+    }
+
+    private String parseTimestamp(Instant time) {
+        TimeZone tz = TimeZone.getTimeZone("UST");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm"); // Quoted "Z" to indicate UTC, no timezone offset
+        df.setTimeZone(tz);
+        return df.format(time);
+    }
+
+    @Override
+    public String toNiceString() {
+        return "transit, going from " + goingFrom.toNiceString() + " to " + goingTo.toNiceString() +
+                ", getting there " + parseTimestamp(Instant.ofEpochMilli(ends)) + " (" + id + ")";
     }
 }

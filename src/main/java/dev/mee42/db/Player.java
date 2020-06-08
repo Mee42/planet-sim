@@ -1,55 +1,35 @@
 package dev.mee42.db;
 
 import discord4j.core.object.util.Snowflake;
-import org.jdbi.v3.core.Handle;
-import org.jdbi.v3.core.statement.Query;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-interface Querier {
-    Query query(Handle handle);
-}
 
 public class Player {
-    public final long discordID;
+    public final Snowflake discordID;
     public final int id;
     public final String name;
-    public final DatabaseObject<Location> location;
+    public Location location;
 
-    public static DatabaseObject<Player> get(int id){
-
-        return new DatabaseObject<>(id, () -> Database.connection.withHandle((handle) ->
-                handle.createQuery("")
-                        .bind("id", id)
-                        .map((rs, ctx) -> new Player(rs.getLong("discordID"),
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                Location.get(rs.getInt("location"))))
-                        .list()
-        ).stream().findFirst().orElse(null));
-    }
-
-    private static DatabaseObject<Player> getFromQuery(Querier query) {
-        return new DatabaseObject<Player>((p) -> p.id, () -> Database.connection.withHandle((handle) ->
-                query.query(handle)
-                        .map((rs, ctx) -> new Player(rs.getLong("discordID"),
-                                rs.getInt("id"),
-                                rs.getString("name"),
-                                Location.get(rs.getInt("location"))))
-                        .list()
-        ).stream().findFirst().orElse(null));
-    }
-
-    public Player(long discordID, int id, String name, DatabaseObject<Location> location) {
+    public Player(Snowflake discordID, int id, String name, Location location) {
+        Objects.requireNonNull(location);
+        Objects.requireNonNull(discordID);
         this.discordID = discordID;
         this.id = id;
         this.name = name;
         this.location = location;
     }
 
-    public static DatabaseObject<Player> getByDiscordID(Snowflake authorID) {
-        return null;
+    public static Player getByDiscordID(Snowflake authorID) {
+        return all.stream().filter(i -> i.discordID.equals(authorID)).findFirst().orElse(null);
     }
-
+    private static final List<Player> all = new ArrayList<>();
+    public static List<Player> getAll() {
+        return all;
+    }
+    public static Player getById(int id){ return all.stream().filter(it -> it.id == id).findFirst().orElse(null); }
     @Override
     public String toString() {
         return "Player{" +

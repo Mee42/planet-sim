@@ -13,9 +13,14 @@ import discord4j.core.object.util.Snowflake;
 import java.awt.*;
 import java.util.Optional;
 
+
+
 public class Main {
 
     static void reset() {
+
+
+
         SolarSystem.getAll().clear();
         SolarSystem solarSystem = new SolarSystem(10, "main-solar-system", 0, 0);
         SolarSystem.getAll().add(solarSystem);
@@ -39,7 +44,6 @@ public class Main {
         Discord.commands.add(new DevCommand());
         Discord.commands.add(new SaveCommand());
         Discord.commands.add(new LoadCommand());
-
 
         Discord.client.getEventDispatcher().on(MessageCreateEvent.class)
                 .filter(it -> it.getMessage().getContent().isPresent() &&

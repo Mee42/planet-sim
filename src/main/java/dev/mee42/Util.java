@@ -1,9 +1,5 @@
 package dev.mee42;
 
-import dev.mee42.db.Location;
-import dev.mee42.db.Player;
-import dev.mee42.db.SolarSystem;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
@@ -60,10 +56,5 @@ public class Util {
     public static Optional<String> fold(Stream<String> stream) {
         return fold(stream.collect(toList()), (a,b) -> a + "\n" + b);
     }
-    public static int genNewID(){
-        int p = Player.getAll().stream().mapToInt(it -> it.id).max().orElse(20);
-        int l = Location.allLocations.stream().mapToInt(it -> it.id).max().orElse(20);
-        int s = SolarSystem.getAll().stream().mapToInt(it -> it.id).max().orElse(20);
-        return Math.max(Math.max(p, l), s);
-    }
+
 }

@@ -3,9 +3,9 @@ package dev.mee42.commands;
 import dev.mee42.discord.Command;
 import dev.mee42.discord.Context;
 
-public class DevCommand extends Command {
-    public DevCommand() {
-        super(false, false, false, "Dev", "dev", "throws an exception");
+public class CrashCommand extends Command {
+    public CrashCommand() {
+        super(false, false, false, "Crash", "crash", "throws an exception");
     }
 
     @Override

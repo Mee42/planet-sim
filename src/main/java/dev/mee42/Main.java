@@ -5,53 +5,40 @@ import dev.mee42.db.*;
 import dev.mee42.discord.Command;
 import dev.mee42.discord.Context;
 import dev.mee42.discord.Discord;
+import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
-import discord4j.core.object.entity.MessageChannel;
-import discord4j.core.object.util.Snowflake;
+import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.rest.util.Color;
 
-import java.awt.*;
 import java.util.Optional;
-
 
 
 public class Main {
 
-    static void reset() {
-
-
-
-        SolarSystem.getAll().clear();
-        SolarSystem solarSystem = new SolarSystem(10, "main-solar-system", 0, 0);
-        SolarSystem.getAll().add(solarSystem);
-        Location.allLocations.clear();
-        Planet earth = new Planet("Earth", solarSystem, null, 11);
-        Location.allLocations.add(earth);
-        Moon theMoon = new Moon(12, "The Moon", earth, null);
-        Location.allLocations.add(theMoon);
-    }
 
     public static void main(String[] args) {
         System.out.println("Planet Sim!\n");
         System.err.flush();
+        
+        
+        Database db = Database.inst;// make sure constructor runs
 
-        Util.makeUnchecked(Saver::load);
 
         // add all the commands
         Discord.commands.add(new HelpCommand());
         Discord.commands.add(new StatsCommand());
         Discord.commands.add(new RegisterCommand());
-        Discord.commands.add(new DevCommand());
-        Discord.commands.add(new SaveCommand());
-        Discord.commands.add(new LoadCommand());
+        Discord.commands.add(new CrashCommand());
+        Discord.commands.add(new ResetCommand());
+        Discord.commands.add(new MineCommand());
 
-        Discord.client.getEventDispatcher().on(MessageCreateEvent.class)
-                .filter(it -> it.getMessage().getContent().isPresent() &&
-                        it.getMessage().getChannelId().equals(Snowflake.of(697597664845365279L)) &&
-                        it.getMessage().getContent().get().startsWith("ps"))
+        Discord.gateway.getEventDispatcher().on(MessageCreateEvent.class)
+                .filter(it -> it.getMessage().getChannelId().equals(Snowflake.of(697597664845365279L)) &&
+                        it.getMessage().getContent().startsWith("ps"))
                 .subscribe(it -> {
                     //noinspection ig toOptionalGetWithoutIsPresent
-                    String[] split = it.getMessage().getContent().get().substring(2).trim().split(" ", 2);
+                    String[] split = it.getMessage().getContent().substring(2).trim().split(" ", 2);
                     if (split.length == 0 || split[0].trim().isEmpty()) {
                         return;
                     }
@@ -83,12 +70,14 @@ public class Main {
                     }
                 });
 
-        Discord.client.getEventDispatcher()
+        Discord.gateway.getEventDispatcher()
                 .on(ReadyEvent.class)
-                .flatMap(x -> Discord.client.getChannelById(Snowflake.of(697597664845365279L)))
+                .flatMap(y -> Discord.gateway.getChannelById(Snowflake.of(697597664845365279L)))
                 .cast(MessageChannel.class)
                 .flatMap(c -> c.createMessage("Started up. *(Got ready event)*"))
                 .subscribe();
-        Discord.client.login().block();
+
+
+        Discord.gateway.onDisconnect().block();
     }
 }

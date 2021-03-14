@@ -1,9 +1,5 @@
 package dev.mee42.commands;
 
-import dev.mee42.UserScrewedUpException;
-import dev.mee42.Util;
-import dev.mee42.db.Planet;
-import dev.mee42.db.Player;
 import dev.mee42.discord.Command;
 import dev.mee42.discord.Context;
 
@@ -20,18 +16,19 @@ public class RegisterCommand extends Command  {
 
     @Override
     public void run(Context context) {
-        Player existing = context.player;
-        if(existing != null) {
-            throw new UserScrewedUpException("You are already registered");
-        }
-        int id = Util.genNewID();
-        Player.getAll().add(new Player(
-                context.authorID,
-                id,
-                context.author.getUsername(),
-                Planet.getEarth()
-        ));
-        context.message.getAuthorAsMember().flatMap(author -> author.edit(spec -> spec.setNickname(author.getDisplayName() + " (" + id + ")"))).block();
-        context.createMessage("Registered!").block();
+        context.createMessage("Not done with this yet!").block();
+//        Player existing = context.player;
+//        if(existing != null) {
+//            throw new UserScrewedUpException("You are already registered");
+//        }
+//        int id = Util.genNewID();
+//        Player.getAll().add(new Player(
+//                context.authorID,
+//                id,
+//                context.author.getUsername(),
+//                Planet.getEarth()
+//        ));
+//        context.message.getAuthorAsMember().flatMap(author -> author.edit(spec -> spec.setNickname(author.getDisplayName() + " (" + id + ")"))).block();
+//        context.createMessage("Registered!").block();
     }
 }

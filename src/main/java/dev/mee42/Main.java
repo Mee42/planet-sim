@@ -16,14 +16,11 @@ import java.util.Optional;
 
 public class Main {
 
-
     public static void main(String[] args) {
         System.out.println("Planet Sim!\n");
         System.err.flush();
-        
-        
-        Database db = Database.inst;// make sure constructor runs
 
+        Database db = Database.inst;// make sure constructor runs
 
         // add all the commands
         Discord.commands.add(new HelpCommand());

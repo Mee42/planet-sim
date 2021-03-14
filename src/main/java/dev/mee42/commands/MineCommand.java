@@ -27,6 +27,6 @@ public class MineCommand extends Command {
         }
         int newMines = existing.getInteger("mines") + 1;
         Database.inst.db.getCollection("users").updateOne(Filters.eq("_id", id), Updates.combine(Updates.set("mines", newMines), Updates.set("last_mine", Instant.now().toEpochMilli())));
-        context.createMessage("you have mined " + newMines + " times, <@" + id + ">!").block();
+        context.createMessage("you have mined " + newMines + " times, " + context.author.getMention() + "!").block();
     }
 }

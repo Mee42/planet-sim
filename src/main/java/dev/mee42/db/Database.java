@@ -3,6 +3,7 @@ package dev.mee42.db;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import dev.mee42.Util;
 import dev.mee42.discord.Discord;
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Guild;
@@ -13,7 +14,7 @@ import java.util.Objects;
 
 public class Database {
     public static final Database inst = new Database();
-    private final MongoClient client = MongoClients.create("mongodb://root:rootpassword@127.0.0.1");
+    private final MongoClient client = MongoClients.create("mongodb://root:" + Util.getPasswords().get(0) + "@127.0.0.1");
     public final MongoDatabase db = client.getDatabase("ps");
     private Database() {
         System.out.println("Connected to Database");

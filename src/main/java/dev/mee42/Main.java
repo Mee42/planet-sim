@@ -36,48 +36,48 @@ public class Main {
         Discord.gateway.getEventDispatcher().on(MessageCreateEvent.class)
                 .filter(it -> it.getMessage().getChannelId().equals(Snowflake.of(697597664845365279L)) &&
                         it.getMessage().getContent().startsWith("ps"))
-                .subscribe(it -> {
-                    //noinspection ig toOptionalGetWithoutIsPresent
-                    String[] split = it.getMessage().getContent().substring(2).trim().split(" ", 2);
-                    if (split.length == 0 || split[0].trim().isEmpty()) {
-                        return;
-                    }
-                    String commandStr = split[0];
-                    String arguments = split.length == 2 ? split[1] : "";
-                    Optional<Command> command = Discord.commands.stream().filter(c -> c.name.equalsIgnoreCase(commandStr.trim())).findFirst();
-                    Context context = new Context(it.getMessage(), arguments);
-                    if (command.isEmpty()) {
-                        context.createMessage("can't find command \"" + commandStr + "\"").block();
-                        return; // deal with later
-                    }
-                    Command c = command.get();
-                    System.out.println("Running command " + c.name + " author: " + context.authorID + "  message: " + context.messageContent);
-                    try {
-                        c.run(context);
-                    } catch (UserScrewedUpException e) {
-                        context.createEmbed(spec -> {
-                            spec.setColor(Color.RED);
-                            spec.setTitle("User Error: ");
-                            spec.setDescription(e.getMessage());
-                        }).block();
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                        context.createEmbed(spec -> {
-                            spec.setColor(Color.RED);
-                            spec.setTitle("Runtime Error: " + e.getClass().getCanonicalName());
-                            spec.setDescription(e.getMessage());
-                        }).block();
-                    }
-                });
+                .subscribe(Main::onMessage);
 
         Discord.gateway.getEventDispatcher()
                 .on(ReadyEvent.class)
                 .flatMap(y -> Discord.gateway.getChannelById(Snowflake.of(697597664845365279L)))
                 .cast(MessageChannel.class)
-                .flatMap(c -> c.createMessage("Started up. *(Got ready event)*"))
+                .flatMap(c -> c.createMessage("Started up. *(Got ready event)* - " + Util.getPasswords().get(2)))
                 .subscribe();
 
 
         Discord.gateway.onDisconnect().block();
+    }
+    private static void onMessage(MessageCreateEvent message) {
+        String[] split = message.getMessage().getContent().substring(2).trim().split(" ", 2);
+        if (split.length == 0 || split[0].trim().isEmpty()) {
+            return;
+        }
+        String commandStr = split[0];
+        String arguments = split.length == 2 ? split[1] : "";
+        Optional<Command> command = Discord.commands.stream().filter(c -> c.name.equalsIgnoreCase(commandStr.trim())).findFirst();
+        Context context = new Context(message.getMessage(), arguments);
+        if (command.isEmpty()) {
+            context.createMessage("can't find command \"" + commandStr + "\"").block();
+            return; // deal with later
+        }
+        Command c = command.get();
+        System.out.println("Running command " + c.name + " author: " + context.authorID + "  message: " + context.messageContent);
+        try {
+            c.run(context);
+        } catch (UserScrewedUpException e) {
+            context.createEmbed(spec -> {
+                spec.setColor(Color.RED);
+                spec.setTitle("User Error: ");
+                spec.setDescription(e.getMessage());
+            }).block();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            context.createEmbed(spec -> {
+                spec.setColor(Color.RED);
+                spec.setTitle("Runtime Error: " + e.getClass().getCanonicalName());
+                spec.setDescription(e.getMessage());
+            }).block();
+        }
     }
 }

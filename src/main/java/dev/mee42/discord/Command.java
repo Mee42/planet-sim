@@ -17,11 +17,11 @@ public abstract class Command {
 
     public abstract void run(Context context);
 
-    public final boolean needsAccount; // if this is 'true', 'player' is not-null
-    public final boolean stateful;
-    public final boolean adminCommand;
+    public final boolean needsAccount; // if the user needs to registered in ps
+    public final boolean stateful; /// if the command is stateful (why do we need this?)
+    public final boolean adminCommand; // if only @Admins should be able to runt his command
     public final String shortHelp;
     public final String longHelp;
-    public final String name;
+    public final String name; // the keyword used after 'ps', for example the 'mine' in 'ps mine'
 
 }

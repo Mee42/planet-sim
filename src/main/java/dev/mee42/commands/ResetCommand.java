@@ -12,5 +12,6 @@ public class ResetCommand extends Command {
     @Override
     public void run(Context context) {
         Database.inst.reset();
+        context.createMessage("Reset");
     }
 }

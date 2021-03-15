@@ -24,11 +24,12 @@ public class Main {
 
         // add all the commands
         Discord.commands.add(new HelpCommand());
-        Discord.commands.add(new StatsCommand());
+        Discord.commands.add(new InfoCommand());
         Discord.commands.add(new RegisterCommand());
         Discord.commands.add(new CrashCommand());
         Discord.commands.add(new ResetCommand());
         Discord.commands.add(new MineCommand());
+        Discord.commands.add(new StatsCommand());
 
         Discord.gateway.getEventDispatcher().on(MessageCreateEvent.class)
                 .filter(it -> it.getMessage().getChannelId().equals(Snowflake.of(697597664845365279L)) &&
@@ -53,9 +54,9 @@ public class Main {
         String commandStr = split[0];
         String arguments = split.length == 2 ? split[1] : "";
         Optional<Command> command = Discord.commands.stream().filter(c -> c.name.equalsIgnoreCase(commandStr.trim())).findFirst();
-        Context context = new Context(message.getMessage(), arguments);
+        Context context = new Context(message.getMessage(), arguments.trim());
         if (command.isEmpty()) {
-            context.createMessage("can't find command \"" + commandStr + "\"").block();
+            context.createMessage("can't find command \"" + commandStr + "\"");
             return; // deal with later
         }
         Command c = command.get();
@@ -67,14 +68,14 @@ public class Main {
                 spec.setColor(Color.RED);
                 spec.setTitle("User Error: ");
                 spec.setDescription(e.getMessage());
-            }).block();
+            });
         } catch (Throwable e) {
             e.printStackTrace();
             context.createEmbed(spec -> {
                 spec.setColor(Color.RED);
                 spec.setTitle("Runtime Error: " + e.getClass().getCanonicalName());
                 spec.setDescription(e.getMessage());
-            }).block();
+            });
         }
     }
 }

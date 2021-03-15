@@ -26,11 +26,18 @@ public class Context {
         this.author =  message.getAuthor().orElseThrow(() -> new RuntimeException("oof"));
         this.authorID = author.getId();
     }
-    public Mono<Message> createMessage(String content) {
+    public Mono<Message> createMessageAsync(String content) {
         return message.getChannel().flatMap(c -> c.createMessage(content));
     }
-    public Mono<Message> createEmbed(Consumer<EmbedCreateSpec> spec) {
+    public Message createMessage(String content) {
+        return createMessageAsync(content).block();
+    }
+    
+    public Mono<Message> createEmbedAsync(Consumer<EmbedCreateSpec> spec) {
         return message.getChannel().flatMap(c -> c.createEmbed(spec));
+    }
+    public Message createEmbed(Consumer<EmbedCreateSpec> spec) {
+        return createEmbedAsync(spec).block();
     }
 }
 

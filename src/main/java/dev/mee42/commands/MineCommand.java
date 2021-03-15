@@ -1,11 +1,9 @@
 package dev.mee42.commands;
 
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
 import dev.mee42.db.Database;
+import dev.mee42.db.Player;
 import dev.mee42.discord.Command;
 import dev.mee42.discord.Context;
-import org.bson.Document;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -18,15 +16,28 @@ public class MineCommand extends Command {
 
     @Override
     public void run(Context context) {
-        long id = context.authorID.asLong();
-        Document existing = Database.inst.db.getCollection("users").find(Filters.eq("_id", id)).first();
-        Duration duration = Duration.between(Instant.now(), Instant.ofEpochMilli(existing.get("last_mine", Long.class))).abs();
-        if(duration.compareTo(Duration.ofMinutes(1)) < 1) {
-            context.createMessage("You've already mined this minute! You have " + (60 - duration.getSeconds()) + " seconds left").block();
+        var existing = Database.inst.jdbi.withHandle(h ->
+                h.createQuery("SELECT * FROM users WHERE id = :id LIMIT 1")
+                        .bind("id", context.authorID)
+                        .mapTo(Player.class).findFirst()
+        );
+        if(existing.isEmpty())  {
+            context.createMessage("You don't seem to be in the system yet");
             return;
         }
-        int newMines = existing.getInteger("mines") + 1;
-        Database.inst.db.getCollection("users").updateOne(Filters.eq("_id", id), Updates.combine(Updates.set("mines", newMines), Updates.set("last_mine", Instant.now().toEpochMilli())));
-        context.createMessage("you have mined " + newMines + " times, " + context.author.getMention() + "!").block();
+        var player = existing.get();
+        Duration duration = Duration.between(Instant.now(), player.lastMine).abs();
+
+
+
+        if(duration.compareTo(Duration.ofMinutes(1)) < 1) {
+            context.createMessage("You've already mined this minute! You have " + (60 - duration.getSeconds()) + " seconds left");
+            return;
+        }
+        int newMines = player.mines + 1;
+        Database.inst.jdbi.useHandle(h -> {
+            h.execute("UPDATE users SET mines = ?, lastMine = ? WHERE id = ?", newMines, Instant.now(), context.authorID);
+        });
+        context.createMessage("Mined! You've now mined " + newMines + " times");
     }
 }

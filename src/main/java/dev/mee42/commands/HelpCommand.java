@@ -14,7 +14,7 @@ public class HelpCommand extends Command {
 
     @Override
     public void run(Context context) {
-        context.message.getChannel().flatMap(c -> c.createEmbed(spec -> {
+        context.createEmbed(spec -> {
             var color = java.awt.Color.getHSBColor(new Random().nextFloat(), 0.7f, 0.7f);
             spec.setColor(Color.of(color.getRed(), color.getGreen(), color.getBlue()));
                 if(context.argument.trim().isEmpty()) {
@@ -28,6 +28,6 @@ public class HelpCommand extends Command {
                     spec.setTitle("THIS PART OF THE HELP MENU ISN'T DONE");
                     spec.setDescription("DON'T USE IT");
             }
-        })).block();
+        });
     }
 }

@@ -16,7 +16,7 @@ public class RegisterCommand extends Command  {
 
     @Override
     public void run(Context context) {
-        context.createMessage("Not done with this yet!").block();
+        context.createMessage("Not done with this yet!");
 //        Player existing = context.player;
 //        if(existing != null) {
 //            throw new UserScrewedUpException("You are already registered");

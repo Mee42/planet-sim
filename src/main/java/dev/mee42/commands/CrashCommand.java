@@ -10,6 +10,6 @@ public class CrashCommand extends Command {
 
     @Override
     public void run(Context context) {
-        throw new RuntimeException("test");
+        throw new RuntimeException(":ohno:");
     }
 }

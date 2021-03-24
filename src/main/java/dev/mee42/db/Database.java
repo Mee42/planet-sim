@@ -82,13 +82,35 @@ CREATE TABLE users(
 
  schema:
 
- collection users:
-   _id: their discord id
-   name: their display name
-   mines: an int, how many times have they mined
-   last_mine: a unix timestamp, the instant they last mined
+users:
+    id: their discord id
+    name: their display name
+    last_mine: a unix timestamp, the instant they last mined
+    location: a location id, can be a planet, moon, or transit
 
+planets:
+    id: randomly generated
+    name: their display name, can be changed by the owner of the planet
+    star: the star that they orbit
 
+moon:
+    id: randomly generated
+    name: display name, can be changed
+    planet: the planet they orbit
+
+stars:
+    id: randomly generated
+    name: the name of the star
+    xPosition: int
+    yPosition: int
+
+transit:
+    id: randomly generated
+    user: id of the user traveling
+    startTime: epoch millis
+    endTime: epoch millis, the time it ends
+    destination: a location id, either a planet or moon
+    origin: a location id, either a planet or moon, of where the user started
 
 */
 

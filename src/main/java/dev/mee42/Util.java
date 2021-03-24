@@ -10,7 +10,7 @@ import static java.util.stream.Collectors.toList;
 
 public class Util {
 
-    public static List<String> getPasswords() {
+    public static List<String> getSecrets() {
         return makeUnchecked(() -> Files.readAllLines(new File("./key.txt").toPath()));
     }
     public interface Wrapper<T> {

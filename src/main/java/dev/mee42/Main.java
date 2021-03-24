@@ -40,12 +40,14 @@ public class Main {
                 .on(ReadyEvent.class)
                 .flatMap(y -> Discord.gateway.getChannelById(Snowflake.of(697597664845365279L)))
                 .cast(MessageChannel.class)
-                .flatMap(c -> c.createMessage("Started up. *(Got ready event)* - " + Util.getPasswords().get(2)))
+                .flatMap(c -> c.createMessage("Started up. *(Got ready event)* - " + Util.getSecrets().get(2)))
                 .subscribe();
 
 
         Discord.gateway.onDisconnect().block();
     }
+
+
     private static void onMessage(MessageCreateEvent message) {
         String[] split = message.getMessage().getContent().substring(2).trim().split(" ", 2);
         if (split.length == 0 || split[0].trim().isEmpty()) {

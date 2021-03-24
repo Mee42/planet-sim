@@ -5,7 +5,7 @@ import dev.mee42.discord.Context;
 
 public class CrashCommand extends Command {
     public CrashCommand() {
-        super(false, false, false, "Crash", "crash", "throws an exception");
+        super(false, false, false, "crash", "Crashes the bot", "throws an exception");
     }
 
     @Override

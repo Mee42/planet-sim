@@ -10,7 +10,7 @@ public class RegisterCommand extends Command  {
                 true,
                 false,
                 "register",
-                "register for the game",
+                "Register for the game",
                 "use this command to become a player of planet sim");
     }
 

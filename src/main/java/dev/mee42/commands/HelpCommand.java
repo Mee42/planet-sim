@@ -9,7 +9,7 @@ import java.util.Random;
 
 public class HelpCommand extends Command {
     public HelpCommand() {
-        super(false, false, false, "help","get some help!", "use `ps help [name]` for more information. Like you just did.");
+        super(false, false, false, "help","Get some help!", "use `ps help [name]` for more information. Like you just did.");
     }
 
     @Override
@@ -17,16 +17,21 @@ public class HelpCommand extends Command {
         context.createEmbed(spec -> {
             var color = java.awt.Color.getHSBColor(new Random().nextFloat(), 0.7f, 0.7f);
             spec.setColor(Color.of(color.getRed(), color.getGreen(), color.getBlue()));
-                if(context.argument.trim().isEmpty()) {
-
+            if(context.argument.trim().isEmpty()) {
                 spec.setTitle("Planet Sim Help");
                 spec.setDescription("do `ps help [name] for more information");
                 for(Command command : Discord.commands) {
-                    spec.addField(command.name, command.shortHelp, true);
+                    spec.addField(command.name, command.shortHelp, false);
                 }
-            }else {
-                    spec.setTitle("THIS PART OF THE HELP MENU ISN'T DONE");
-                    spec.setDescription("DON'T USE IT");
+            } else {
+                var command = Discord.commands.stream().filter(it -> it.name.equals(context.argument.trim())).findFirst();
+                if(command.isEmpty()) {
+                    spec.setTitle("I can't find that command");
+                    spec.setColor(Color.RED);
+                } else {
+                    spec.setTitle("Help for ps " + context.argument.trim());
+                    spec.setDescription(command.get().longHelp);
+                }
             }
         });
     }

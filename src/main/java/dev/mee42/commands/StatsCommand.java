@@ -9,7 +9,7 @@ import java.time.Instant;
 
 public class StatsCommand extends Command {
     public StatsCommand() {
-        super(false, false, false, "stats", "Stats", "Information about the bot");
+        super(false, false, false, "stats", "Information about the bot", "Information about the bot");
     }
 
     public static final Instant startedAt = Instant.now();

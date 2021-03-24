@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Discord {
-    public static final DiscordClient client = DiscordClientBuilder.create(Util.getPasswords().get(1).trim()).build();
+    public static final DiscordClient client = DiscordClientBuilder.create(Util.getSecrets().get(1).trim()).build();
     public static final GatewayDiscordClient gateway = client
             .gateway()
             .setEnabledIntents(IntentSet.nonPrivileged().or(IntentSet.of(Intent.GUILD_MEMBERS)))

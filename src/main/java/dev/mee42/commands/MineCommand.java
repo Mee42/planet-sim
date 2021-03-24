@@ -10,7 +10,7 @@ import java.time.Instant;
 
 public class MineCommand extends Command {
     public MineCommand() {
-        super(false, false, false, "Mine", "mine", "Mines some. Make sure you're in the right channel");
+        super(false, false, false, "mine", "Mines some resources", "Mines some. Make sure you're in the right channel");
     }
     
 

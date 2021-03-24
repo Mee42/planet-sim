@@ -6,7 +6,7 @@ import dev.mee42.discord.Context;
 
 public class ResetCommand extends Command {
     public ResetCommand() {
-        super(false, true, true, "Reset", "reset", "reset the database");
+        super(false, true, true, "reset", "Reset the bot database", "reset the database");
     }
 
     @Override

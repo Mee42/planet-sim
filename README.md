@@ -21,3 +21,4 @@ Database root password
 Discord bot token
 Developer Name
 ```
+being woerked on
